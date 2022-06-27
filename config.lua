@@ -30,8 +30,9 @@ map('n', ',b', ':Buffers<cr>', options)
 map('n', ',t', ':Marks<cr>', options)
 
 
+require 'lspconfig'.solargraph.setup {}
 
---- LPS setup ---
+-- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 local opts = { noremap = true, silent = true }
 vim.keymap.set('n', '<space>o', vim.diagnostic.open_float, opts)
@@ -73,6 +74,10 @@ require('lspconfig')['solargraph'].setup {
   on_attach = on_attach,
   flags = lsp_flags,
 }
+require('lspconfig')['pyright'].setup {
+  on_attach = on_attach,
+  flags = lsp_flags,
+}
 require('lspconfig')['tsserver'].setup {
   on_attach = on_attach,
   flags = lsp_flags,
@@ -86,9 +91,6 @@ require('lspconfig')['rust_analyzer'].setup {
   }
 }
 
-
-
---- autocompletion setup ---
 local use = require('packer').use
 require('packer').startup(function()
   use 'neovim/nvim-lspconfig' -- Collection of configurations for built-in LSP client
@@ -105,7 +107,7 @@ capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 local lspconfig = require('lspconfig')
 
 -- Enable some language servers with the additional completion capabilities offered by nvim-cmp
-local servers = { 'solargraph', 'rust_analyzer', 'pyright', 'tsserver' }
+local servers = { 'clangd', 'rust_analyzer', 'pyright', 'tsserver' }
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
     -- on_attach = my_custom_on_attach,
@@ -124,15 +126,10 @@ cmp.setup {
       luasnip.lsp_expand(args.body)
     end,
   },
-  window = {
-    -- completion = cmp.config.window.bordered(),
-    -- documentation = cmp.config.window.bordered(),
-  },
   mapping = cmp.mapping.preset.insert({
     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete(),
-    ['<C-e>'] = cmp.mapping.abort(),
     ['<CR>'] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
@@ -159,9 +156,7 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
-  }, {
-    { name = 'buffer' },
-  }
+  },
 }
 
 
