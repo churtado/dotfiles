@@ -31,6 +31,7 @@ map('n', ',t', ':Marks<cr>', options)
 
 
 require 'lspconfig'.solargraph.setup {}
+require 'lspconfig'.tsserver.setup {}
 
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
