@@ -9,7 +9,7 @@ an executable
 -- THESE ARE EXAMPLE CONFIGS FEEL FREE TO CHANGE TO WHATEVER YOU WANT
 
 -- general
-lvim.log.level = "warn"
+lvim.log.level = "debug"
 lvim.format_on_save = true
 lvim.colorscheme = "gruvbox-material"
 
@@ -31,7 +31,6 @@ map('n', ',t', ':Marks<cr>', options)
 
 
 require 'lspconfig'.solargraph.setup {}
-require 'lspconfig'.tsserver.setup {}
 
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
@@ -72,14 +71,11 @@ local lsp_flags = {
   debounce_text_changes = 150,
 }
 require('lspconfig')['solargraph'].setup {
+  cmd = { "/home/linuxbrew/.linuxbrew/bin/solargraph", "stdio" },
   on_attach = on_attach,
   flags = lsp_flags,
 }
 require('lspconfig')['pyright'].setup {
-  on_attach = on_attach,
-  flags = lsp_flags,
-}
-require('lspconfig')['tsserver'].setup {
   on_attach = on_attach,
   flags = lsp_flags,
 }
@@ -108,7 +104,7 @@ capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 local lspconfig = require('lspconfig')
 
 -- Enable some language servers with the additional completion capabilities offered by nvim-cmp
-local servers = { 'clangd', 'rust_analyzer', 'pyright', 'tsserver' }
+local servers = { 'clangd', 'rust_analyzer', 'pyright' }
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
     -- on_attach = my_custom_on_attach,
@@ -159,8 +155,6 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
-
-
 
 vim.cmd([[
 "###################### fzf settings #####################
@@ -368,10 +362,12 @@ lvim.plugins = {
   { "tpope/vim-abolish" },
   { "tpope/vim-fugitive" },
   { "tpope/vim-rails" },
-  { "tpope/vim-sleuth" }
+  { "tpope/vim-sleuth" },
+  { "tpope/vim-surround" }
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
 -- lvim.autocommands.custom_groups = {
 --   { "BufWinEnter", "*.lua", "setlocal ts=8 sw=8" },
 -- }
+
