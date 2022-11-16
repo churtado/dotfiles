@@ -10,6 +10,7 @@ an executable
 
 -- general
 lvim.log.level = "warn"
+lvim.builtin.lualine.style = "default"
 -- lvim.format_on_save = true
 lvim.colorscheme = "gruvbox-material"
 -- to disable icons and use a minimalist setup, uncomment the following
