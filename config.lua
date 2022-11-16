@@ -10,8 +10,9 @@ an executable
 
 -- general
 lvim.log.level = "warn"
-lvim.format_on_save = false
-lvim.colorscheme = "tokyonight"
+lvim.builtin.lualine.style = "default"
+-- lvim.format_on_save = true
+lvim.colorscheme = "gruvbox-material"
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 
@@ -31,9 +32,8 @@ map('n', ',g', ':Rg<cr>', options)
 map('n', ',b', ':Buffers<cr>', options)
 map('n', ',t', ':Marks<cr>', options)
 
-
 require("scrollbar").setup()
-require 'lspconfig'.tsserver.setup {}
+require 'lspconfig'.solargraph.setup {}
 
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
@@ -45,7 +45,7 @@ vim.keymap.set('n', '<space>d', vim.diagnostic.setloclist, opts)
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
-local on_attach = function(_, bufnr)
+local on_attach = function(client, bufnr)
   -- Enable completion triggered by <c-x><c-o>
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
@@ -73,15 +73,12 @@ local lsp_flags = {
   -- This is the default in Nvim 0.7+
   debounce_text_changes = 150,
 }
---require('lspconfig')['solargraph'].setup {
-  --on_attach = on_attach,
-  --flags = lsp_flags,
---}
-require('lspconfig')['pyright'].setup {
+require('lspconfig')['solargraph'].setup {
+  cmd = { "/Users/mrenp/.local/share/nvim/lsp_servers/solargraph/bin/solargraph", "stdio" },
   on_attach = on_attach,
   flags = lsp_flags,
 }
-require('lspconfig')['tsserver'].setup {
+require('lspconfig')['pyright'].setup {
   on_attach = on_attach,
   flags = lsp_flags,
 }
@@ -105,12 +102,12 @@ end)
 
 -- Add additional capabilities supported by nvim-cmp
 local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
 local lspconfig = require('lspconfig')
 
 -- Enable some language servers with the additional completion capabilities offered by nvim-cmp
-local servers = { 'clangd', 'rust_analyzer', 'pyright', 'tsserver' }
+local servers = { 'clangd', 'rust_analyzer', 'pyright' }
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
     -- on_attach = my_custom_on_attach,
@@ -162,9 +159,12 @@ cmp.setup {
   },
 }
 
-
-
 vim.cmd([[
+"###################### mundo settings #####################
+" Enable persistent undo so that undo history persists across vim sessions
+"set undofile
+"set undodir=~/.vim/undo
+"nnoremap <F5> :MundoToggle<CR>
 "###################### fzf settings #####################
 " This is the default extra key bindings
 let g:fzf_action = {
@@ -246,10 +246,6 @@ lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 --   },
 -- }
 
--- Change theme settings
--- lvim.builtin.theme.options.dim_inactive = true
--- lvim.builtin.theme.options.style = "storm"
-
 -- Use which-key to add extra bindings with the leader-key prefix
 -- lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
 -- lvim.builtin.which_key.mappings["t"] = {
@@ -288,13 +284,13 @@ lvim.builtin.treesitter.ensure_installed = {
 }
 
 lvim.builtin.treesitter.ignore_install = { "haskell" }
-lvim.builtin.treesitter.highlight.enable = true
+lvim.builtin.treesitter.highlight.enabled = true
 
 -- generic LSP settings
 
 -- -- make sure server will always be installed even if the server is in skipped_servers list
 -- lvim.lsp.installer.setup.ensure_installed = {
---     "sumneko_lua",
+--     "sumeko_lua",
 --     "jsonls",
 -- }
 -- -- change UI setting of `LspInstallInfo`
@@ -332,43 +328,44 @@ lvim.builtin.treesitter.highlight.enable = true
 -- end
 
 -- -- set a formatter, this will override the language server formatting capabilities (if it exists)
--- local formatters = require "lvim.lsp.null-ls.formatters"
--- formatters.setup {
---   { command = "black", filetypes = { "python" } },
---   { command = "isort", filetypes = { "python" } },
---   {
---     -- each formatter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
---     command = "prettier",
---     ---@usage arguments to pass to the formatter
---     -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
---     extra_args = { "--print-with", "100" },
---     ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
---     filetypes = { "typescript", "typescriptreact" },
---   },
--- }
+local formatters = require "lvim.lsp.null-ls.formatters"
+formatters.setup {
+  --   { command = "black", filetypes = { "python" } },
+  --   { command = "isort", filetypes = { "python" } },
+  {
+    --     -- each formatter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
+    command = "eslint_d",
+    --     ---@usage arguments to pass to the formatter
+    --     -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
+    extra_args = { "-f", "json", "--stdin", "--fix-to-stdout", "--stdin-filename", "$FILENAME" },
+    --     ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
+    filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+  },
+}
 
 -- -- set additional linters
--- local linters = require "lvim.lsp.null-ls.linters"
--- linters.setup {
---   { command = "flake8", filetypes = { "python" } },
---   {
---     -- each linter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
---     command = "shellcheck",
---     ---@usage arguments to pass to the formatter
---     -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
---     extra_args = { "--severity", "warning" },
---   },
---   {
---     command = "codespell",
---     ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
---     filetypes = { "javascript", "python" },
---   },
--- }
+local linters = require "lvim.lsp.null-ls.linters"
+linters.setup {
+  --   { command = "flake8", filetypes = { "python" } },
+  --   {
+  --     -- each linter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
+  --     command = "shellcheck",
+  --     ---@usage arguments to pass to the formatter
+  --     -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
+  --     extra_args = { "--severity", "warning" },
+  --   },
+  {
+    command = "eslint_d",
+    ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
+    filetypes = { "typescript", "typescriptreact" },
+  },
+}
 
 -- Additional Plugins
 lvim.plugins = {
   { "camspiers/animate.vim" },
   { "camspiers/lens.vim" },
+  { "folke/tokyonight.nvim" },
   {
     "folke/trouble.nvim",
     cmd = "TroubleToggle",
@@ -380,12 +377,14 @@ lvim.plugins = {
   { "peitalin/vim-jsx-typescript" },
   { "petertriho/nvim-scrollbar" },
   { "sainnhe/gruvbox-material" },
+  --  { "simnalamburt/vim-mundo" },
   { "slim-template/vim-slim" },
   { "styled-components/vim-styled-components" },
   { "tpope/vim-abolish" },
   { "tpope/vim-fugitive" },
   { "tpope/vim-rails" },
-  { "tpope/vim-sleuth" }
+  { "tpope/vim-sleuth" },
+  { "tpope/vim-surround" }
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
