@@ -332,13 +332,14 @@ local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
   --   { command = "black", filetypes = { "python" } },
   --   { command = "isort", filetypes = { "python" } },
+  -- {
+  --   command = "prettier",
+  --   extra_args = { "--use-tabs=true", "--single-quote=true", "--jsx-single-quote=true" },
+  --   filetypes = { "typescript", "typescriptreact" },
+  -- },
   {
-    --     -- each formatter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
     command = "eslint_d",
-    --     ---@usage arguments to pass to the formatter
-    --     -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
     extra_args = { "-f", "json", "--stdin", "--fix-to-stdout", "--stdin-filename", "$FILENAME" },
-    --     ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
     filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
   },
 }
@@ -377,12 +378,12 @@ lvim.plugins = {
   { "peitalin/vim-jsx-typescript" },
   { "petertriho/nvim-scrollbar" },
   { "sainnhe/gruvbox-material" },
-  --  { "simnalamburt/vim-mundo" },
   { "slim-template/vim-slim" },
   { "styled-components/vim-styled-components" },
+  { "sudormrfbin/cheatsheet.nvim" },
   { "tpope/vim-abolish" },
   { "tpope/vim-fugitive" },
-  { "tpope/vim-rails" },
+  -- { "tpope/vim-rails" },
   { "tpope/vim-sleuth" },
   { "tpope/vim-surround" }
 }
