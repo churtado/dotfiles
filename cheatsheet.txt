@@ -1,0 +1,7 @@
+## personal
+cheatsheet location                    | ~/.local/share/lunarvim/site/pack/packer/start/cheatsheet.nvim/
+toggle comment                         | <leader>/
+
+## vim-surround
+remove quote on "Hello"                | ds"
+add bracket to word: [Hello] world!    | ysiw]
