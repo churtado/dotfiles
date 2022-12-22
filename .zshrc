@@ -68,16 +68,16 @@ wk() {
 
   case "$packageName" in
      "do")
-         cd /home/$(id -un)/workplace/GsfDonationTracking/src && eval $directory_method
+         cd /Users/$(id -un)/workplace/$(id -un)/GsfDonationTracking/src && eval $directory_method
       ;;
     "motodash" | "md")
-        cd /home/$(id -un)/workplace/MotoDash/src && eval $directory_method
+        cd /home/$(id -un)/workplace/$(id -un)/MotoDash/src && eval $directory_method
       ;;
     "motocc" | "mcc")
-      cd /home/$(id -un)/workplace/MotoCC/src && eval $directory_method
+      cd /home/$(id -un)/workplace/$(id -un)/MotoCC/src && eval $directory_method
       ;;
     *)
-      cd /home/$(id -un)/workplace/$packageName/src && eval $directory_method
+      cd /home/$(id -un)/workplace/$(id -un)/$packageName/src && eval $directory_method
       ;;
   esac
 }
